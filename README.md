@@ -3,6 +3,9 @@
 
 > A mobile-first, voice-driven AI companion for mental health support built with Flutter, FastAPI, and Google Gemini 2.5.
 
+[![CI](https://github.com/pr1ncegupta/voicemind-public/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/pr1ncegupta/voicemind-public/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 ![Flutter](https://img.shields.io/badge/Flutter-3.41+-02569B?style=for-the-badge&logo=flutter&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.133+-009688?style=for-the-badge&logo=fastapi&logoColor=white)
 ![Gemini](https://img.shields.io/badge/Gemini_2.5-Flash-4285F4?style=for-the-badge&logo=google&logoColor=white)
