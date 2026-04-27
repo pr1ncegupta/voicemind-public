@@ -65,9 +65,12 @@ jobs:
           cache-dependency-path: backend/requirements.txt
 
       - name: Install dependencies
+        # `--no-deps` because requirements.txt is a pip-freeze of a working
+        # Python 3.13+ venv; sub-dependencies are already pinned alongside
+        # their parents but the resolver flags them as conflicting.
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install --no-deps -r requirements.txt
 
       - name: Run offline tests
         # Tests that hit the real Gemini API (test_chat_*, test_full_journey)
