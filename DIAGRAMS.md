@@ -236,19 +236,19 @@ stateDiagram-v2
         }
 
         state CopingToolbox {
-            Breathing[Guided Breathing]
-            Grounding[Grounding Exercises]
-            CBT[CBT Techniques]
-            Mindfulness[Mindfulness]
-            SelfCompassion[Self-Compassion]
-            Somatic[Somatic Release]
+            state "Guided Breathing" as Breathing
+            state "Grounding Exercises" as Grounding
+            state "CBT Techniques" as CBT
+            state "Mindfulness" as Mindfulness
+            state "Self-Compassion" as SelfCompassion
+            state "Somatic Release" as Somatic
         }
 
         state ProfilePage {
-            EditProfile[Name / Age / Concerns]
-            VoiceSelect[Voice Companion<br>30 HD voices]
-            CopingHistory[Strategy Tracking]
-            CloudSync[Firestore Sync]
+            state "Name / Age / Concerns" as EditProfile
+            state "Voice Companion (30 HD voices)" as VoiceSelect
+            state "Strategy Tracking" as CopingHistory
+            state "Firestore Sync" as CloudSync
         }
     }
 
