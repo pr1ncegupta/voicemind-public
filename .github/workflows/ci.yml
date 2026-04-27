@@ -1,0 +1,78 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  flutter:
+    name: Flutter (analyze + test)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+
+      - name: Stub Firebase config (CI only)
+        # firebase_options.dart and platform Firebase config files are gitignored
+        # and generated locally via `flutterfire configure`. CI doesn't need real
+        # Firebase credentials to run analyze + unit tests, so we drop in a stub.
+        run: |
+          cat > lib/firebase_options.dart <<'EOF'
+          // Stub for CI. Generate the real file locally with `flutterfire configure`.
+          import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
+          class DefaultFirebaseOptions {
+            static FirebaseOptions get currentPlatform => const FirebaseOptions(
+              apiKey: 'ci-stub',
+              appId: 'ci-stub',
+              messagingSenderId: 'ci-stub',
+              projectId: 'ci-stub',
+            );
+          }
+          EOF
+
+      - name: Flutter pub get
+        run: flutter pub get
+
+      - name: Flutter analyze
+        run: flutter analyze
+
+      - name: Flutter unit tests
+        run: flutter test
+
+  backend:
+    name: Backend (lint + offline tests)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run offline tests
+        # Tests that hit the real Gemini API (test_chat_*, test_full_journey)
+        # are skipped here. Configure a GEMINI_API_KEY repository secret and
+        # extend this step to run them in a separate job if desired.
+        env:
+          GEMINI_API_KEY: ""
+        run: |
+          pytest tests/ -v -k "not test_chat and not test_full_journey and not test_adk"
