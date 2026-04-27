@@ -57,8 +57,16 @@ if not api_key:
     print("   Copy .env.example to .env and add your API key.")
     api_key = ""  # Empty fallback - AI will fail gracefully
 
-# Create the Gemini client (API key) for regular chat endpoints
-client = genai.Client(api_key=api_key)
+# Create the Gemini client (API key) for regular chat endpoints.
+# Wrapped so the module can still import without a valid key (e.g. in CI),
+# enabling offline tests and non-AI endpoints. AI calls will fail at request time.
+try:
+    client = genai.Client(api_key=api_key) if api_key else None
+    if client is None:
+        print("⚠️  Gemini client not initialised (no API key). AI endpoints will return errors.")
+except Exception as e:
+    client = None
+    print(f"⚠️  Gemini client init failed: {e}. AI endpoints will return errors.")
 
 # ── Firestore client for persistent logging + admin dashboard ──
 FIREBASE_PROJECT = os.getenv("FIREBASE_PROJECT", "")
